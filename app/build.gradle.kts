@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.daggerHilt)
-    id("kotlin-kapt")
+    alias(libs.plugins.kotlinKapt)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -26,8 +27,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -86,4 +86,10 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
+
+    // Immutable List
+    implementation(libs.immutable.collection)
+
+    // Kotlin-Serializer-Json
+    implementation(libs.kotlinx.serialization.json)
 }
