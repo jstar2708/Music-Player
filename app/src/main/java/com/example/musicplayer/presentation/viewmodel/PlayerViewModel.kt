@@ -4,16 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import com.example.musicplayer.constant.MpDispatcher
 import com.example.musicplayer.model.Audio
 import com.example.musicplayer.player.AudioPlayer
 import com.example.musicplayer.player.AudioScanner
 import com.example.musicplayer.player.PlayerListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,30 +28,21 @@ class PlayerViewModel @Inject constructor(
 
     var isPlaying = playerListener._isPlaying.asStateFlow()
 
-    private val _currentAudio: MutableStateFlow<Audio?> = MutableStateFlow(null)
-    var currentAudio = _currentAudio.asStateFlow()
+    val currentAudio: StateFlow<Audio?> = playerListener._currentAudioId.asStateFlow().map { audioId ->
+        _audioList.value.find { audio -> audio.id == audioId }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    fun scanFiles(range: Int) {
+
+    fun scanFiles(range: Int): List<Audio> {
         _audioList.value = when (range) {
             0 -> audioScanner.scanAllAudioFilesFromExternalDirectory()
             else -> emptyList()
         }
+        return _audioList.value
     }
 
-    private fun getAudioId() = viewModelScope.launch(MpDispatcher.default) {
-        playerListener.currentAudioId.collectLatest { audioId ->
-            audioId?.let {
-                getAudioFromAudioId(it)
-            }
-        }
-    }
-
-    private fun getAudioFromAudioId(audioId: String) {
-        _currentAudio.value = _audioList.value.find { audio -> audio.id == audioId }
-    }
-
-    private fun getAudioListFromCurrentAudio(): List<Audio> {
-        _audioList.value.indexOf(_currentAudio.value).also { index ->
+    private fun getAudioListFromCurrentAudio(audioList: List<Audio>): List<Audio> {
+        audioList.indexOf(currentAudio.value).also { index ->
             if (index != -1) {
                 return _audioList.value.subList(index, _audioList.value.size)
             }
@@ -66,7 +58,6 @@ class PlayerViewModel @Inject constructor(
     fun initializeAudioPlayer() {
         audioPlayer.initializePlayer()
         audioPlayer.addListener(playerListener)
-        getAudioId()
     }
 
     private fun setMediaItems() {
@@ -104,8 +95,8 @@ class PlayerViewModel @Inject constructor(
         playerListener.updateCurrentAudioId(audioId)
     }
 
-    fun updateAudioListAfterCurrentSong() {
-        updateAudioList(getAudioListFromCurrentAudio())
+    fun updateAudioListAfterCurrentSong(audioList: List<Audio>) {
+        updateAudioList(getAudioListFromCurrentAudio(audioList))
     }
 
 }

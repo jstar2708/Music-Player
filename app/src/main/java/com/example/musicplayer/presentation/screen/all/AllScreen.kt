@@ -77,12 +77,12 @@ fun AllScreenRoot(
             playerViewModel.initializeAudioPlayer()
         }
         // Add media items to list
-        playerViewModel.scanFiles(0)
+        allViewModel.setAudioListForScreen(playerViewModel.scanFiles(0))
     }
-    AllScreen(audioList = playerViewModel.audioList.collectAsState().value.toImmutableList(),
+    AllScreen(audioList = allViewModel.audioListForScreen.collectAsState().value.toImmutableList(),
         navigateToPlayerScreen = { serializableAudio ->
             playerViewModel.updateCurrentSong(serializableAudio.id)
-            playerViewModel.updateAudioListAfterCurrentSong()
+            playerViewModel.updateAudioListAfterCurrentSong(allViewModel.audioListForScreen.value)
             navigateToPlayerScreen(serializableAudio)
         })
 }

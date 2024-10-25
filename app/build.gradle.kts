@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.daggerHilt)
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.kotlinSerialization)
+    id("kotlin-parcelize")
 }
 
 android {

@@ -9,3 +9,5 @@ object HomeScreen
 @Serializable
 data class PlayerScreen(val audio: SerializableAudio)
 
+@Serializable
+object MainGraph

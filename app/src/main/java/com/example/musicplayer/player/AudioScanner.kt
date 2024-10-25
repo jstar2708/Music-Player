@@ -38,7 +38,7 @@ class AudioScanner(
 
                 mediaItems.add(
                     Audio(
-                        id = id.toString(),
+                        id = cursor.getString(id),
                         title = cursor.getString(title),
                         artist = cursor.getString(artist),
                         uri = ContentUris.withAppendedId(

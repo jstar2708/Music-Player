@@ -2,7 +2,6 @@ package com.example.musicplayer.model
 
 import android.graphics.Bitmap
 import android.net.Uri
-import kotlinx.serialization.Serializable
 
 data class Audio(
     val id: String,

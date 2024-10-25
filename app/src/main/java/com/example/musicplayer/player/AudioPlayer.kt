@@ -2,9 +2,7 @@ package com.example.musicplayer.player
 
 import android.app.Application
 import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class AudioPlayer(private val application: Application) {
     private var player: ExoPlayer? = null

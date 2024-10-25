@@ -3,6 +3,7 @@ package com.example.musicplayer.di
 import android.app.Application
 import com.example.musicplayer.player.AudioPlayer
 import com.example.musicplayer.player.AudioScanner
+import com.example.musicplayer.player.PlayerListener
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +24,11 @@ class AppModule {
     @Singleton
     fun providesAudioScanner(app: Application): AudioScanner {
         return AudioScanner(app)
+    }
+
+    @Provides
+    @Singleton
+    fun providesPlayerListener(): PlayerListener {
+        return PlayerListener()
     }
 }

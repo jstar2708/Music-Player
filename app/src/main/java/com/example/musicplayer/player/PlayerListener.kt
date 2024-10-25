@@ -5,7 +5,7 @@ import androidx.media3.common.Player
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class PlayerListener : Player.Listener {
-    val currentAudioId = MutableStateFlow<String?>(null)
+    val _currentAudioId = MutableStateFlow<String?>(null)
     val _isPlaying: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -19,11 +19,11 @@ class PlayerListener : Player.Listener {
             // Playlist ends
             _isPlaying.value = false
         }
-        currentAudioId.value = mediaItem?.mediaId
+        _currentAudioId.value = mediaItem?.mediaId
     }
 
     fun updateCurrentAudioId(audioId: String) {
-        currentAudioId.value = audioId
+        _currentAudioId.value = audioId
     }
 
 }
