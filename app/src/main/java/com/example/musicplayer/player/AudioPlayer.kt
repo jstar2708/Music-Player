@@ -41,10 +41,12 @@ class AudioPlayer(private val application: Application) {
 
     fun skipToNext() {
         player?.seekToNextMediaItem()
+        player?.seekTo(0)
     }
 
     fun skipToPrevious() {
         player?.seekToPreviousMediaItem()
+        player?.seekTo(0)
     }
 
     fun clearMediaItems() {
@@ -57,6 +59,10 @@ class AudioPlayer(private val application: Application) {
 
     fun addListener(playerListener: PlayerListener) {
         player?.addListener(playerListener)
+    }
+
+    fun setCurrentAudio(currentAudioIndex: Int) {
+        player?.seekTo(currentAudioIndex, 0)
     }
 
 }

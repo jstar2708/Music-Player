@@ -68,11 +68,11 @@ private fun AllScreenPreview() {
 
 @Composable
 fun AllScreenRoot(
-    playerViewModel: PlayerViewModel, navigateToPlayerScreen: (SerializableAudio) -> Unit
+    playerViewModel: PlayerViewModel, navigateToPlayerScreen: () -> Unit
 ) {
     val allViewModel = hiltViewModel<AllViewModel>()
     LaunchedEffect(key1 = true) {
-        // Initialize Player
+        // Initialize Player and add listener
         if (!playerViewModel.isPlayerInitialized()) {
             playerViewModel.initializeAudioPlayer()
         }
@@ -82,8 +82,7 @@ fun AllScreenRoot(
     AllScreen(audioList = allViewModel.audioListForScreen.collectAsState().value.toImmutableList(),
         navigateToPlayerScreen = { serializableAudio ->
             playerViewModel.updateCurrentSong(serializableAudio.id)
-            playerViewModel.updateAudioListAfterCurrentSong(allViewModel.audioListForScreen.value)
-            navigateToPlayerScreen(serializableAudio)
+            navigateToPlayerScreen()
         })
 }
 

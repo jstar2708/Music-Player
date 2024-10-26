@@ -13,8 +13,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil3.compose.AsyncImage
 import com.example.musicplayer.R
-import com.example.musicplayer.constant.PlayerScreen
 import com.example.musicplayer.model.Audio
 import com.example.musicplayer.presentation.component.appbar.MpTopAppBar
 import com.example.musicplayer.presentation.component.seekbar.MpSeekBar
@@ -37,37 +38,55 @@ import com.example.musicplayer.ui.theme.MusicPlayerTheme
 @Composable
 private fun PlayerScreenPreview() {
     MusicPlayerTheme {
-        PlayerScreen(isPlayEnabled = true, audio = Audio(
-            id = "",
-            artist = "Jaideep Kumar Singh",
-            title = "Main hoon na",
-            thumbnail = LocalContext.current.resources.getDrawable(
-                R.drawable.default_audio_thumbnail, Resources.getSystem().newTheme()
-            ).toBitmap(width = 1000, height = 1000),
-            duration = 0,
-            dateAdded = 0,
-            relativePath = "",
-            uri = Uri.parse("")
-        ), onPlayClick = { }, onSkipPreviousClick = { }) {
+        PlayerScreen(
+            isPlayEnabled = true,
+            audio = Audio(
+                id = "",
+                artist = "Jaideep Kumar Singh",
+                title = "Main hoon na",
+                thumbnail = LocalContext.current.resources.getDrawable(
+                    R.drawable.default_audio_thumbnail, Resources.getSystem().newTheme()
+                ).toBitmap(width = 1000, height = 1000),
+                duration = 0,
+                dateAdded = 0,
+                relativePath = "",
+                uri = Uri.parse("")
+            ),
+            onPlayClick = { },
+            onSkipPreviousClick = { },
+            progress = 0f,
+            currentTime = "00:00",
+            finalTime = "04:00"
+        ) {
 
         }
     }
 }
 
 @Composable
-fun PlayerScreenRoot(args: PlayerScreen, playerViewModel: PlayerViewModel) {
+fun PlayerScreenRoot(playerViewModel: PlayerViewModel) {
+    val isPlaying = playerViewModel.isPlaying.collectAsState().value
+    val duration by remember {
+        mutableStateOf(playerViewModel.getAudioDuration())
+    }
     PlayerScreen(
-        isPlayEnabled = playerViewModel.isPlaying.collectAsState().value,
+        isPlayEnabled = isPlaying,
+        progress = playerViewModel.progress.collectAsState().value,
         audio = playerViewModel.currentAudio.collectAsState().value,
-        onPlayClick = playerViewModel::playAudio,
+        onPlayClick = if (isPlaying) playerViewModel::pauseAudio else playerViewModel::playAudio,
         onSkipPreviousClick = playerViewModel::skipToPrevious,
-        onSkipNextClick = playerViewModel::skipToNext
+        onSkipNextClick = playerViewModel::skipToNext,
+        finalTime = duration,
+        currentTime = playerViewModel.currentTime.collectAsState().value
     )
 }
 
 @Composable
 fun PlayerScreen(
     isPlayEnabled: Boolean,
+    currentTime: String,
+    finalTime: String,
+    progress: Float,
     audio: Audio?,
     onPlayClick: () -> Unit,
     onSkipPreviousClick: () -> Unit,
@@ -99,10 +118,13 @@ fun PlayerScreen(
             )
             MpSeekBar(
                 modifier = Modifier.weight(.15f),
+                currentTime = currentTime,
                 isPlayEnabled = isPlayEnabled,
                 onSkipPreviousClick = onSkipPreviousClick,
                 onPlayClick = onPlayClick,
-                onSkipNextClick = onSkipNextClick
+                onSkipNextClick = onSkipNextClick,
+                progress = progress,
+                finalTime = finalTime
             )
         }
     }

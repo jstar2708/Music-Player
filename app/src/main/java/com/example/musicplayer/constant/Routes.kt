@@ -1,13 +1,19 @@
 package com.example.musicplayer.constant
 
-import com.example.musicplayer.model.SerializableAudio
 import kotlinx.serialization.Serializable
 
 @Serializable
-object HomeScreen
+sealed class Screen {
+    @Serializable
+    data object HomeScreen : Screen()
+
+    @Serializable
+    data object PlayerScreen : Screen()
+}
 
 @Serializable
-data class PlayerScreen(val audio: SerializableAudio)
+sealed class Graph {
+    @Serializable
+    data object MainGraph : Graph()
+}
 
-@Serializable
-object MainGraph

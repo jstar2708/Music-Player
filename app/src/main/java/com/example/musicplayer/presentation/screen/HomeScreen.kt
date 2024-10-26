@@ -30,20 +30,22 @@ private fun HomeScreenPreview() {
         HomeScreen(selectedTab = 0,
             tabList = persistentListOf("All", "Playlist", "Folder", "Artist"),
             onTabClicked = {},
-            navigateToPlayerScreen = {},
-            tabScreens = {})
+            tabScreens = {},
+            backPress = {})
     }
 }
 
 @Composable
 fun HomeScreenRoot(
-    playerViewModel: PlayerViewModel, navigateToPlayerScreen: (SerializableAudio) -> Unit
+    playerViewModel: PlayerViewModel,
+    navigateToPlayerScreen: () -> Unit,
+    backPress: () -> Unit
 ) {
     val homeViewModel = hiltViewModel<HomeViewModel>()
     HomeScreen(selectedTab = homeViewModel.selectedTab,
         tabList = homeViewModel.tabList,
         onTabClicked = homeViewModel::onTabClicked,
-        navigateToPlayerScreen = navigateToPlayerScreen,
+        backPress = backPress,
         tabScreens = {
             when (homeViewModel.selectedTab) {
                 0 -> AllScreenRoot(playerViewModel, navigateToPlayerScreen)
@@ -59,15 +61,13 @@ fun HomeScreen(
     selectedTab: Int,
     tabList: ImmutableList<String>,
     onTabClicked: (Int) -> Unit,
-    navigateToPlayerScreen: (SerializableAudio) -> Unit,
-    tabScreens: @Composable () -> Unit
+    tabScreens: @Composable () -> Unit,
+    backPress: () -> Unit
 ) {
     Scaffold(topBar = {
         MpTopAppBar(
-            title = "Music Player", icon = Icons.Filled.Menu
-        ) {
-
-        }
+            title = "Music Player", icon = Icons.Filled.Menu, onIconClick = backPress
+        )
     }) {
         Column(modifier = Modifier.padding(it)) {
             MpTabLayout(

@@ -30,17 +30,23 @@ import com.example.musicplayer.ui.theme.MusicPlayerTheme
 private fun MpSeekBarPreview() {
     MusicPlayerTheme {
         MpSeekBar(
+            progress = .5f,
             isPlayEnabled = true,
             onSkipNextClick = {},
             onPlayClick = {},
-            onSkipPreviousClick = {}
+            onSkipPreviousClick = {},
+            currentTime = "00:00",
+            finalTime = "04:00"
         )
     }
 }
 
 @Composable
 fun MpSeekBar(
+    progress: Float,
     modifier: Modifier = Modifier,
+    currentTime: String,
+    finalTime: String,
     isPlayEnabled: Boolean,
     onPlayClick: () -> Unit,
     onSkipPreviousClick: () -> Unit,
@@ -56,15 +62,15 @@ fun MpSeekBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "00:00", color = Color.LightGray, fontSize = 14.sp)
-            Text(text = "04:00", color = Color.LightGray, fontSize = 14.sp)
+            Text(text = currentTime, color = Color.Black, fontSize = 14.sp)
+            Text(text = finalTime, color = Color.Black, fontSize = 14.sp)
         }
         LinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(6.dp),
             progress = {
-                .5f
+                progress
             },
             gapSize = 0.dp,
             strokeCap = StrokeCap.Round,
@@ -80,18 +86,24 @@ fun MpSeekBar(
             horizontalArrangement = Arrangement.Absolute.SpaceAround
         ) {
             Icon(
-                modifier = Modifier.size(40.dp).clickable(onClick = onSkipPreviousClick),
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable(onClick = onSkipPreviousClick),
                 painter = painterResource(id = R.drawable.baseline_skip_previous_24),
                 contentDescription = "previous icon",
                 tint = Color.Black
             )
             Icon(
-                modifier = Modifier.size(40.dp).clickable(onClick = onPlayClick),
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable(onClick = onPlayClick),
                 painter = painterResource(id = if (isPlayEnabled) R.drawable.baseline_pause_24 else R.drawable.baseline_play_arrow_24),
                 contentDescription = "play icon"
             )
             Icon(
-                modifier = Modifier.size(40.dp).clickable(onClick = onSkipNextClick),
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable(onClick = onSkipNextClick),
                 painter = painterResource(id = R.drawable.baseline_skip_next_24),
                 contentDescription = "next icon"
             )

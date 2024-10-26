@@ -1,10 +1,13 @@
 package com.example.musicplayer.presentation.component.appbar
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -28,19 +31,14 @@ private fun MpTopAppBarPreview() {
 
 @Composable
 fun MpTopAppBar(
-    title: String,
-    icon: ImageVector,
-    onIconClick: () -> Unit
+    title: String, icon: ImageVector, onIconClick: () -> Unit
 ) {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .size(50.dp), contentAlignment = Alignment.CenterStart
+            .height(50.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
-        MediumTextBold(
-            modifier = Modifier.fillMaxWidth(), text = title, alignment = TextAlign.Center
-        )
 
         Icon(
             modifier = Modifier
@@ -50,5 +48,11 @@ fun MpTopAppBar(
             imageVector = icon,
             contentDescription = "Back button icon"
         )
+
+        MediumTextBold(
+            modifier = Modifier.weight(1f), text = title, alignment = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.width(40.dp))
     }
 }

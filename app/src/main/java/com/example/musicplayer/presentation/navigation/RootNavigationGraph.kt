@@ -12,10 +12,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import com.example.musicplayer.constant.HomeScreen
-import com.example.musicplayer.constant.MainGraph
-import com.example.musicplayer.constant.PlayerScreen
+import com.example.musicplayer.constant.Graph
+import com.example.musicplayer.constant.Screen
 import com.example.musicplayer.model.SerializableAudio
 import com.example.musicplayer.presentation.screen.HomeScreenRoot
 import com.example.musicplayer.presentation.screen.PlayerScreenRoot
@@ -28,23 +26,26 @@ import kotlin.reflect.typeOf
 fun RootNavigationGraph() {
     val rootNavController = rememberNavController()
     NavHost(
-        navController = rootNavController, startDestination = HomeScreen, route = MainGraph::class
+        navController = rootNavController,
+        startDestination = Screen.HomeScreen,
+        route = Graph.MainGraph::class
     ) {
-        composable<HomeScreen> { backStackEntry ->
+        composable<Screen.HomeScreen> { backStackEntry ->
             val playerViewModel =
                 backStackEntry.sharedViewModel<PlayerViewModel>(navController = rootNavController)
-            HomeScreenRoot(playerViewModel = playerViewModel, navigateToPlayerScreen = { audio ->
-                rootNavController.navigate(PlayerScreen(audio))
+            HomeScreenRoot(playerViewModel = playerViewModel, navigateToPlayerScreen = {
+                rootNavController.navigate(Screen.PlayerScreen)
+            }, backPress = {
+                rootNavController.popBackStack()
             })
         }
 
-        composable<PlayerScreen>(
+        composable<Screen.PlayerScreen>(
             typeMap = mapOf(typeOf<SerializableAudio>() to serializableAudioType)
         ) { backStackEntry ->
             val playerViewModel =
                 backStackEntry.sharedViewModel<PlayerViewModel>(navController = rootNavController)
-            val args = backStackEntry.toRoute<PlayerScreen>()
-            PlayerScreenRoot(args = args, playerViewModel)
+            PlayerScreenRoot(playerViewModel)
         }
     }
 }
@@ -74,6 +75,4 @@ val serializableAudioType = object : NavType<SerializableAudio>(false) {
     override fun serializeAsValue(value: SerializableAudio): String {
         return Uri.encode(Json.encodeToString(value))
     }
-
-
 }
